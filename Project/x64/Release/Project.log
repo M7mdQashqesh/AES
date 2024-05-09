@@ -1,16 +1,17 @@
 ﻿  proj.cpp
-C:\Users\M7md Qash\source\repos\Project\Project\proj.cpp(115,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\M7md Qash\source\repos\Project\Project\proj.cpp(139,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\M7md Qash\source\repos\Project\Project\proj.cpp(161,16): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\M7md Qash\source\repos\Project\Project\proj.cpp(256,14): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\M7md Qash\source\repos\Project\Project\proj.cpp(347,30): warning C4242: '=': conversion from 'int' to '_Ty', possible loss of data
-C:\Users\M7md Qash\source\repos\Project\Project\proj.cpp(347,30): warning C4242:         with
-C:\Users\M7md Qash\source\repos\Project\Project\proj.cpp(347,30): warning C4242:         [
-C:\Users\M7md Qash\source\repos\Project\Project\proj.cpp(347,30): warning C4242:             _Ty=uchar
-C:\Users\M7md Qash\source\repos\Project\Project\proj.cpp(347,30): warning C4242:         ]
+C:\Users\M7md Qash\source\repos\Project\Project\proj.cpp(197,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\M7md Qash\source\repos\Project\Project\proj.cpp(220,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\M7md Qash\source\repos\Project\Project\proj.cpp(241,16): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\M7md Qash\source\repos\Project\Project\proj.cpp(331,14): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\M7md Qash\source\repos\Project\Project\proj.cpp(412,18): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\M7md Qash\source\repos\Project\Project\proj.cpp(652,31): warning C4242: '=': conversion from 'int' to '_Ty', possible loss of data
+C:\Users\M7md Qash\source\repos\Project\Project\proj.cpp(652,31): warning C4242:         with
+C:\Users\M7md Qash\source\repos\Project\Project\proj.cpp(652,31): warning C4242:         [
+C:\Users\M7md Qash\source\repos\Project\Project\proj.cpp(652,31): warning C4242:             _Ty=uchar
+C:\Users\M7md Qash\source\repos\Project\Project\proj.cpp(652,31): warning C4242:         ]
   Generating code
-  2 of 1103 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
-    1 functions were new in current compilation
+  1 of 1364 functions (<0.1%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
     2 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Project.vcxproj -> C:\Users\M7md Qash\source\repos\Project\x64\Release\Project.exe
