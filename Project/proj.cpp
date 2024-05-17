@@ -464,6 +464,43 @@ void hideSecretBits(Mat& image, vector<bool> secretBits) {
 
 }
 
+vector<bool> extractSecretBits(Mat& image, int numBits) {
+	vector<bool> secretBits;
+	int bitIndex = 0;
+
+	for (int y = 0; y < image.rows; ++y) {
+		for (int x = 0; x < image.cols; ++x) {
+			for (int c = 0; c < image.channels(); ++c) {
+				if (bitIndex < numBits) {
+					uchar pixel = image.at<Vec3b>(y, x)[c];
+					bool bit = pixel & 1;
+					secretBits.push_back(bit);
+					++bitIndex;
+				}
+				else {
+					return secretBits;
+				}
+			}
+		}
+	}
+
+	return secretBits;
+}
+
+string bitsToString(vector<bool> bits) {
+	stringstream ss;
+	for (size_t i = 0; i < bits.size(); i += 8) {
+		unsigned char byte = 0;
+		for (int j = 0; j < 8; ++j) {
+			if (i + j < bits.size()) {
+				byte |= bits[i + j] << (7 - j);
+			}
+		}
+		ss << byte;
+	}
+	return ss.str();
+}
+
 int main() {
 
 	const unsigned char key[] = "211014";
@@ -487,7 +524,8 @@ int main() {
 		cout << "1) Encrypt and Decryption.\n"
 			<< "2) Analysis test.\n"
 			<< "3) Hiding confidential information.\n"
-			<< "4) Exit Program.\n"
+			<< "4) Extract confidential information.\n"
+			<< "5) Exit Program.\n"
 			<< "Select Your Choice: ";
 		cin >> choice;
 
@@ -844,6 +882,8 @@ int main() {
 		}
 		case 3: {
 
+			Mat imageWithSecret = image;
+
 			cout << "Enter the secret Information (Without WhiteSpaces): ";
 			string secretInput;
 			cin >> secretInput;
@@ -867,15 +907,35 @@ int main() {
 			cout << endl;
 
 			// Hide secret bits within the image
-			hideSecretBits(image, secretBits);
+			hideSecretBits(imageWithSecret, secretBits);
 
 			// Save the modified image
-			imwrite("imageWithSecretInformation.bmp", image);
+			imwrite("imageWithSecretInformation.bmp", imageWithSecret);
+
+			vector<unsigned char>ImageWithSecret = createVector(imageWithSecret);
+
+			openAndWriteFile("ImageWithSecret.txt", ImageWithSecret, imageWithSecret);
 
 			system("pause");
 			break;
 		}
 		case 4: {
+
+			Mat imageWithSecret = readImageFromFile();
+
+			cout << "Enter the number of bits to extract: ";
+			int numBits;
+			cin >> numBits;
+
+			vector<bool> extractedBits = extractSecretBits(imageWithSecret, numBits);
+			string extractedSecret = bitsToString(extractedBits);
+
+			cout << "Extracted Secret: " << extractedSecret << endl;
+
+			system("pause");
+			break;
+		}
+		case 5: {
 			cout << "Bye <3 \n";
 			system("pause");
 			break;
@@ -886,7 +946,7 @@ int main() {
 			break;
 		}
 		}
-	} while (choice != 4);
+	} while (choice != 5);
 
-	return 0;
+	return 0;	
 }
