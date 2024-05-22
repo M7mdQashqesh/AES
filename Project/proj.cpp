@@ -752,7 +752,7 @@ int main() {
 					cout << "Correlation Analysis Test= " << calculateCorrelationCoefficient(originalPlainImage, originalCipherImage) << endl;
 
 					// Calculate Entropy
-					cout << "Entropy= " << calculateEntropy(originalPlainImage) << endl;
+					cout << "Entropy= " << calculateEntropy(originalCipherImage) << endl;
 					
 					// calculate Encryption quality 
 					cout << "Encryption quality= " << calculateEncryptionQuality(calculateHistogram(originalPlainImage), calculateHistogram(originalCipherImage)) << endl;
@@ -851,7 +851,7 @@ int main() {
 					cout << "Correlation Analysis Test= " << calculateCorrelationCoefficient(plainImage1, cipherImageByOriginalKey) << endl;
 
 					// Calculate Entropy
-					cout << "Entropy= " << calculateEntropy(plainImage1) << endl;
+					cout << "Entropy= " << calculateEntropy(cipherImageByOriginalKey) << endl;
 
 					// calculate Encryption quality 
 					cout << "Encryption quality= " << calculateEncryptionQuality(calculateHistogram(plainImage1), calculateHistogram(cipherImageByOriginalKey)) << endl;
