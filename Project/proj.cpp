@@ -608,6 +608,8 @@ int main() {
 
 						cout << "Size after Dec: " << plainImage.size() << endl;
 
+						cout << "Rows = " << image.rows << ", Cols = " << image.cols << endl;
+
 						Mat DecryptedImage = createImageFromVector(plainImage, image.cols, image.rows, image.channels(), "DecryptedImage.bmp");
 
 						// Display the image
@@ -750,7 +752,7 @@ int main() {
 					cout << "Correlation Analysis Test= " << calculateCorrelationCoefficient(originalPlainImage, originalCipherImage) << endl;
 
 					// Calculate Entropy
-					cout << "Entropy= " << calculateEntropy(originalCipherImage) << endl;
+					cout << "Entropy= " << calculateEntropy(originalPlainImage) << endl;
 					
 					// calculate Encryption quality 
 					cout << "Encryption quality= " << calculateEncryptionQuality(calculateHistogram(originalPlainImage), calculateHistogram(originalCipherImage)) << endl;
@@ -849,7 +851,7 @@ int main() {
 					cout << "Correlation Analysis Test= " << calculateCorrelationCoefficient(plainImage1, cipherImageByOriginalKey) << endl;
 
 					// Calculate Entropy
-					cout << "Entropy= " << calculateEntropy(cipherImageByOriginalKey) << endl;
+					cout << "Entropy= " << calculateEntropy(plainImage1) << endl;
 
 					// calculate Encryption quality 
 					cout << "Encryption quality= " << calculateEncryptionQuality(calculateHistogram(plainImage1), calculateHistogram(cipherImageByOriginalKey)) << endl;
