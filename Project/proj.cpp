@@ -22,7 +22,7 @@ using namespace chrono;
 using namespace cv;
 using namespace CryptoPP;
 
-const int AES_KEYLENGTH = 128;
+const int AES_KEYLENGTH = 16;
 const int BLOCKSIZE = 16;
 
 Mat readImageFromFile() {
@@ -117,7 +117,7 @@ vector<unsigned char> encryptData(vector<unsigned char>& data, const unsigned ch
 	auto start = high_resolution_clock::now();
 
 	// Prepare the AES encryption object with the provided key and IV
-	AES::Encryption aesEncryption(key, AES_KEYLENGTH / 8);
+	AES::Encryption aesEncryption(key, AES_KEYLENGTH);
 	CBC_Mode_ExternalCipher::Encryption cbcEncryption(aesEncryption, iv);
 
 	vector<unsigned char> ciphertext;
@@ -150,7 +150,7 @@ vector<unsigned char> encryptData(vector<unsigned char>& data, const unsigned ch
 
 vector<unsigned char> decryptData(const vector<unsigned char>& ciphertext, const unsigned char* key, const unsigned char* iv) {
 	// Prepare the AES decryption object with the provided key and IV
-	AES::Decryption aesDecryption(key, AES_KEYLENGTH / 8);
+	AES::Decryption aesDecryption(key, AES_KEYLENGTH);
 	CBC_Mode_ExternalCipher::Decryption cbcDecryption(aesDecryption, iv);
 
 	vector<unsigned char> decryptedData;
@@ -164,6 +164,46 @@ vector<unsigned char> decryptData(const vector<unsigned char>& ciphertext, const
 
 	// Return the decrypted data vector
 	return decryptedData;
+}
+
+
+vector<unsigned char> encryptDataCase1(vector<unsigned char>& data, const unsigned char* key, const unsigned char* iv, double& encryptionTime) {
+	// Start measuring time
+	auto start = high_resolution_clock::now();
+
+	// Prepare the AES-CTR encryption object with the provided key and IV
+	CTR_Mode<AES>::Encryption encryption;
+	encryption.SetKeyWithIV(key, AES_KEYLENGTH, iv, BLOCKSIZE);
+
+	vector<unsigned char> cipher(data.size());
+	encryption.ProcessData(cipher.data(), data.data(), data.size());
+
+	// Stop measuring time
+	auto finish = high_resolution_clock::now();
+	duration<double> elapsedTime = finish - start;
+
+	// Calculate encryption time in milliseconds
+	encryptionTime = elapsedTime.count(); // Convert to milliseconds
+
+	cout << "The image is Encrypted" << endl;
+
+	// Return the encrypted data vector
+	return cipher;
+}
+
+// Function to decrypt data using AES-CTR
+vector<unsigned char> decryptDataCase1(vector<unsigned char>& data, const unsigned char* key, const unsigned char* iv) {
+	// Prepare the AES-CTR decryption object with the provided key and IV
+	CTR_Mode<AES>::Decryption decryption;
+	decryption.SetKeyWithIV(key, AES_KEYLENGTH, iv, BLOCKSIZE);
+
+	vector<unsigned char> plain(data.size());
+	decryption.ProcessData(plain.data(), data.data(), data.size());
+
+	cout << "The image is Decrypted" << endl;
+
+	// Return the decrypted data vector
+	return plain;
 }
 
 double calculateNPCR( vector<unsigned char> vector1, vector<unsigned char> vector2) {
@@ -503,9 +543,9 @@ string bitsToString(vector<bool> bits) {
 
 int main() {
 
-	const unsigned char key[] = "211014";
+	const unsigned char key[] = "MohammedQashqesh";
 
-	const unsigned char iv[] = "1";
+	const unsigned char iv[] = "0123456789abcdef";
 
 	double encryptionTime;
 
@@ -557,9 +597,7 @@ int main() {
 
 					vector<unsigned char> plainImage = createVector(image);
 
-					cout << "plain Size before enc: " << plainImage.size() << endl;
-
-					Mat OriginalImage = createImageFromVector(plainImage , image.cols, image.rows, image.channels(), "OriginalImage.bmp");
+					Mat OriginalImage = createImageFromVector(plainImage, image.cols, image.rows, image.channels(), "OriginalImage.bmp");
 
 					openAndWriteFile("Image.txt", plainImage, OriginalImage);
 
@@ -567,16 +605,9 @@ int main() {
 					imshow("Original Image", OriginalImage);
 
 					// Encrypt plain image
-					vector<unsigned char> cipherImage = encryptData(plainImage, key, iv, encryptionTime);
-
-					cout << "plain Size after enc: " << plainImage.size() << endl;
-
-
-					cout << "Size after enc: " << cipherImage.size() << endl;
+					vector<unsigned char> cipherImage = encryptDataCase1(plainImage, key, iv, encryptionTime);
 
 					Mat EncryptedImage = createImageFromVector(cipherImage, image.cols, image.rows, image.channels(), "EncryptedImage.bmp");
-
-					sharedVector = cipherImage;
 
 					// Display the image
 					imshow("Encrypted Image", EncryptedImage);
@@ -589,36 +620,14 @@ int main() {
 					break;
 				}
 				case 2: {
-					vector<unsigned char> cipherImage = sharedVector;
+					Mat EncryptedImage = readImageFromFile();
 
-					cout << "Size before Dec: " << cipherImage.size() << endl;
+					vector<unsigned char> cipherImage = createVector(EncryptedImage);
 
+					// Decrypt cipher image
+					vector<unsigned char> plainImage = decryptDataCase1(cipherImage, key, iv);
 
-					if (cipherImage.size() == 0) {
-						cout << "You should Encrypt the Image first.\n";
-						system("pause");
-						break;
-					}
-					else {
-
-						Mat EncryptedImage = createImageFromVector(cipherImage, image.cols, image.rows, image.channels(), "EncryptedImage.bmp");
-
-						// Decrypt cipher image
-						vector<unsigned char> plainImage = decryptData(cipherImage, key, iv);
-
-						cout << "Size after Dec: " << plainImage.size() << endl;
-
-						cout << "Rows = " << image.rows << ", Cols = " << image.cols << endl;
-
-						Mat DecryptedImage = createImageFromVector(plainImage, image.cols, image.rows, image.channels(), "DecryptedImage.bmp");
-
-						// Display the image
-						imshow("Encrypted Image", EncryptedImage);
-
-						// Display the image
-						imshow("Decrypted Image", DecryptedImage);
-						waitKey(0);
-					}
+					Mat DecryptedImage = createImageFromVector(plainImage, image.cols, image.rows, image.channels(), "DecryptedImage.bmp");
 
 					system("pause");
 					system("cls");
@@ -632,7 +641,6 @@ int main() {
 					system("pause");
 					break;
 				}
-
 
 			} while (case1Choice != 3);
 
@@ -717,12 +725,12 @@ int main() {
 
 					vector<unsigned char>originalCipherImage = encryptData(originalPlainImage, key, iv, encryptionTime);
 					cout << "The original image is encrypted." << endl;
-					
+
 					vector<unsigned char>modifiedCipherImage = encryptData(modifiedPlainImage, key, iv, encryptionTime);
 					cout << "The modified image is encrypted." << endl;
 
 					cout << "\n\t ----------------------------\n"
-						<<"\t/\tAnalysis test\t    /\n"
+						<< "\t/\tAnalysis test\t    /\n"
 						"\t----------------------------\n\n";
 
 					// Calculate NPCR
@@ -753,10 +761,10 @@ int main() {
 
 					// Calculate Entropy
 					cout << "Entropy= " << calculateEntropy(originalCipherImage) << endl;
-					
+
 					// calculate Encryption quality 
 					cout << "Encryption quality= " << calculateEncryptionQuality(calculateHistogram(originalPlainImage), calculateHistogram(originalCipherImage)) << endl;
-					
+
 					// calculate Encryption time
 					cout << "Encryption Time= " << encryptionTime << " MilliSeconds" << endl;
 
@@ -892,13 +900,13 @@ int main() {
 
 			// Convert the secret key string to a C-style string (const unsigned char[])
 			const unsigned char* secret = reinterpret_cast<const unsigned char*>(secretInput.c_str());
-			
+
 			size_t sizeOfSecret = 0;
 			for (size_t i = 0; secret[i] != '\0'; ++i) {
 				++sizeOfSecret;
 			}
-			
-			cout << "Size of Secret Info is= " << sizeOfSecret << " Characters ("<< sizeOfSecret * 8 << " bits)" << endl;
+
+			cout << "Size of Secret Info is= " << sizeOfSecret << " Characters (" << sizeOfSecret * 8 << " bits)" << endl;
 
 			vector<bool> secretBits = stringToBits(secret, sizeOfSecret);
 
